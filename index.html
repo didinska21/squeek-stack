@@ -6,116 +6,224 @@
 <title>SQUEEK TOOLS — Faucet + Staking for Squeekchain (Sepolia)</title>
 <meta name="description" content="Fan-made community tools for Squeekchain on Sepolia testnet: a Sepolia ETH faucet and a Squeek NFT staking helper.">
 <!-- SQUEEKCHAIN-VERIFY:PAGE-TAG -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@200;300;600&family=IBM+Plex+Mono:wght@400;500&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
 <style>
-@font-face{font-family:'Space Mono';src:url('../fonts/space-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:'Space Mono';src:url('../fonts/space-mono-700.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
 :root{
-  --accent:#60DAFB; --accent-deep:#0A8FB0;
-  --bg:#E8F8FD; --panel:#EEF2F6; --panel2:#FFFFFF; --line:#D3EFF9;
-  --text:#10202A; --muted:#4F6270; --muted2:#8B95A3;
-  --ok:#0E9F6E; --err:#D64545; --warn:#B7791F;
-  --btn-text:#06222E;
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#1F232A; --panel:#252A32; --panel2:#2F353F; --line:#3A424E;
-    --text:#EAF6FB; --muted:#B9C7D1; --muted2:#8B95A3;
-    --btn-text:#06222E;
-  }
+  --bg:#f5f5f7; --panel:#ffffff; --raised:#ededf0;
+  --ink:#2a2a33; --ink-strong:#17171b;
+  --muted:#6e6e7a; --muted2:#5c5c68;
+  --line:#e0e0e6; --line-strong:#d2d2da;
+  --blue:#4460cf; --blue-deep:#2f4499;
+  --active-bg:#003a5c; --active-text:#f7f7f9;
+  --gold:#f2c230; --gold-soft:#fff2d8;
+  --green:#1b7849; --green-mid:#27a464;
+  --red:#c33346;
+  --pink:#af4279; --pink-pale:#fbe6f1;
+  --font-display:'Barlow Condensed',Arial,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --font-body:'Quicksand',Verdana,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  font-family:'Space Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  background:var(--bg); color:var(--text); min-height:100vh;
+  font-family:var(--font-body);font-weight:600;
+  background:var(--bg);color:var(--ink);min-height:100vh;
   -webkit-font-smoothing:antialiased;
 }
-a{color:var(--accent-deep)}
-@media (prefers-color-scheme: dark){ a{color:var(--accent)} }
-.wrap{max-width:880px;margin:0 auto;padding:16px 14px 40px}
-header.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 2px 4px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:22px;letter-spacing:.5px}
-.logo .dot{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
-.logo small{font-weight:400;font-size:12px;color:var(--muted)}
-.status-strip{
-  display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px;
+a{color:var(--blue);text-decoration:none}
+a:hover{color:var(--blue-deep);text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:24px 16px 40px}
+
+/* ---------- Header ---------- */
+header.top{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:16px 24px;
 }
+.brand{display:flex;align-items:center;gap:16px;min-width:0}
+.brand-badge{
+  background:var(--gold-soft);border:1px solid var(--gold);border-radius:4px;
+  font-size:26px;line-height:1;padding:7px 10px;flex:none;
+}
+.brand-name{
+  font-family:var(--font-display);font-weight:600;font-size:36px;line-height:1;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--ink-strong);margin:0;
+}
+.brand-tag{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-top:5px;
+}
+.wallet-box{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#connectedAddr{font-family:var(--font-mono);font-size:12.5px;color:var(--muted2);word-break:break-all}
+
+/* ---------- Live status strip ---------- */
+.status-panel{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:16px 24px;margin-top:16px;
+}
+.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.panel-label{
+  font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted2);
+}
+.panel-note{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+.status-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:12px}
 .chip{
-  background:var(--panel);border:1px solid var(--line);border-radius:999px;
-  padding:6px 12px;font-size:12.5px;display:flex;gap:6px;align-items:center;
+  background:var(--raised);border:1px solid var(--line);border-radius:4px;
+  padding:10px 12px;min-height:40px;display:flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:12.5px;color:var(--muted2);
+  font-variant-numeric:tabular-nums;
 }
-.chip b{font-weight:700}
+.chip b{font-weight:500;color:var(--ink-strong)}
 .chip.stale{opacity:.55}
-.tabs{display:flex;gap:8px;margin:6px 0 14px}
+
+/* ---------- Tabs (segmented) ---------- */
+.tabs{
+  display:flex;gap:4px;background:var(--panel);
+  border:1px solid var(--line-strong);border-radius:4px;
+  padding:4px;margin:16px 0;
+}
 .tab{
-  flex:1;text-align:center;padding:12px;border-radius:12px;cursor:pointer;
-  background:var(--panel);border:1px solid var(--line);font-weight:700;font-size:15px;
-  color:var(--muted);user-select:none;
+  flex:1;display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:44px;padding:10px 12px;border-radius:2px;cursor:pointer;user-select:none;
+  font-family:var(--font-display);font-weight:600;font-size:19px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
 }
-.tab.active{background:var(--accent);color:var(--btn-text);border-color:var(--accent)}
+.tab.active{background:var(--active-bg);color:var(--active-text)}
+
+/* ---------- Cards & content ---------- */
 .card{
-  background:var(--panel);border:1px solid var(--line);border-radius:16px;
-  padding:18px;margin-bottom:14px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:24px;margin-bottom:16px;
 }
-.card h2{margin:0 0 6px;font-size:18px}
-.card h3{margin:16px 0 8px;font-size:15px}
-.sub{color:var(--muted);font-size:13px;line-height:1.55}
-.mono{word-break:break-all}
-label.lbl{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.6px}
+.card h2{
+  font-family:var(--font-display);font-weight:600;font-size:28px;line-height:1.1;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--ink-strong);margin:0 0 8px;
+}
+.card h3{
+  font-family:var(--font-display);font-weight:600;font-size:21px;line-height:1.1;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--ink-strong);margin:24px 0 10px;
+}
+.sub{color:var(--muted2);font-size:14px;line-height:1.6}
+.sub b{color:var(--ink)}
+.mono{font-family:var(--font-mono);word-break:break-all}
+label.lbl{
+  display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin:18px 0 6px;
+}
 input[type=text]{
-  width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);
-  background:var(--panel2);color:var(--text);font:inherit;font-size:14px;
+  width:100%;padding:12px;min-height:44px;border-radius:4px;
+  border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);
+  font-family:var(--font-mono);font-size:14px;font-variant-numeric:tabular-nums;
 }
+input[type=text]:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(68,96,207,.18)}
 button{
-  font:inherit;font-weight:700;border:0;border-radius:10px;cursor:pointer;
-  padding:12px 18px;background:var(--accent);color:var(--btn-text);font-size:14.5px;
+  font-family:var(--font-body);font-weight:700;font-size:14.5px;
+  border:1px solid var(--blue);border-radius:4px;cursor:pointer;
+  padding:12px 20px;min-height:44px;background:var(--blue);color:#fff;
 }
-button:hover{filter:brightness(1.07)}
-button:disabled{opacity:.45;cursor:not-allowed;filter:none}
-button.ghost{background:transparent;border:1px solid var(--accent-deep);color:var(--accent-deep)}
-@media (prefers-color-scheme: dark){ button.ghost{border-color:var(--accent);color:var(--accent)} }
+button:hover:not(:disabled){background:var(--blue-deep);border-color:var(--blue-deep)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.ghost{background:transparent;border:1px solid var(--blue);color:var(--blue)}
+button.ghost:hover:not(:disabled){background:var(--raised);color:var(--blue-deep);border-color:var(--blue-deep)}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .row.between{justify-content:space-between}
-.big{font-size:24px;font-weight:700}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
-.stat{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
-.stat .k{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.6px}
-.stat .v{font-size:17px;font-weight:700;margin-top:4px;word-break:break-all}
-.msg{border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.5;margin-top:12px;display:none}
-.msg.show{display:block}
-.msg.ok{background:rgba(14,159,110,.13);border:1px solid var(--ok)}
-.msg.err{background:rgba(214,69,69,.12);border:1px solid var(--err)}
-.msg.info{background:rgba(96,218,251,.14);border:1px solid var(--accent-deep)}
-.token-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;margin-top:8px}
-.token{
-  background:var(--panel2);border:2px solid var(--line);border-radius:12px;padding:10px;
-  cursor:pointer;text-align:center;user-select:none;
+.lookup-row input[type=text]{flex:1;min-width:220px;width:auto}
+.mt12{margin-top:12px}
+.mt16{margin-top:16px}
+#turnstileBox{margin-top:12px}
+#turnstileBox:empty{margin-top:0}
+
+/* ---------- Data readouts ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:12px}
+.stat{background:var(--raised);border:1px solid var(--line);border-radius:4px;padding:12px 14px}
+.stat .k{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
 }
-.token.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(96,218,251,.35)}
-.token .id{font-weight:700;font-size:16px}
-.token .lv{font-size:12px;color:var(--muted);margin-top:3px}
-.empty{color:var(--muted2);font-size:13.5px;padding:10px 2px}
-.txlog{font-size:13px;line-height:1.6}
-.txlog .pend{color:var(--warn)} .txlog .done{color:var(--ok)} .txlog .fail{color:var(--err)}
-footer{margin-top:22px;color:var(--muted);font-size:12.5px;line-height:1.6;text-align:center;padding:0 8px}
+.stat .v{
+  font-family:var(--font-mono);font-weight:500;font-size:17px;color:var(--ink-strong);
+  margin-top:5px;word-break:break-all;font-variant-numeric:tabular-nums;
+}
+
+/* ---------- Messages ---------- */
+.msg{
+  border:1px solid var(--line-strong);border-radius:4px;
+  padding:12px 14px;font-size:13.5px;line-height:1.55;margin-top:14px;display:none;
+}
+.msg.show{display:block}
+.msg.ok{background:#eaf5ee;border-color:var(--green-mid)}
+.msg.err{background:#fae9ec;border-color:var(--red)}
+.msg.info{background:#eceffa;border-color:var(--blue)}
+
+/* ---------- Token picker ---------- */
+.token-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:10px}
+.token{
+  background:var(--panel);border:1px solid var(--line-strong);border-radius:4px;
+  padding:12px 8px;cursor:pointer;text-align:center;user-select:none;
+}
+.token:hover{border-color:var(--blue)}
+.token.sel{border-color:var(--blue);background:#eceffa;box-shadow:inset 0 0 0 1px var(--blue)}
+.token .id{font-family:var(--font-mono);font-weight:500;font-size:16px;color:var(--ink-strong)}
+.token .lv{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-top:3px}
+.empty{color:var(--muted);font-size:13.5px;padding:10px 2px}
+
+/* ---------- Tx log ---------- */
+.txlog{font-family:var(--font-mono);font-size:13px;line-height:1.65;font-variant-numeric:tabular-nums}
+.txlog .pend{color:var(--muted2)} .txlog .done{color:var(--green)} .txlog .fail{color:var(--red)}
+
+footer{
+  margin-top:24px;padding:16px 8px 0;border-top:1px solid var(--line);
+  color:var(--muted);font-family:var(--font-mono);font-size:12px;
+  line-height:1.7;text-align:center;
+}
 .hidden{display:none!important}
 .countdown{font-variant-numeric:tabular-nums}
+
+/* ---------- Responsive ---------- */
+@media (max-width:640px){
+  .wrap{padding:12px 10px 32px}
+  header.top{padding:16px;flex-direction:column;align-items:flex-start}
+  .status-panel{padding:16px}
+  .status-strip{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .card{padding:18px 16px}
+  .brand-name{font-size:30px}
+  .wallet-box{width:100%}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header class="top">
-    <div class="logo"><span class="dot"></span>SQUEEK&nbsp;TOOLS <small>Faucet + Staking · Squeekchain · Sepolia testnet</small></div>
+    <div class="brand">
+      <div class="brand-badge">🐹</div>
+      <div>
+        <h1 class="brand-name">Squeek Tools</h1>
+        <div class="brand-tag">Faucet + Staking — Squeekchain Sepolia</div>
+      </div>
+    </div>
+    <div class="wallet-box">
+      <span id="connectedAddr"></span>
+      <button id="connectBtn">🔌 Connect Wallet</button>
+    </div>
   </header>
 
   <!-- Live hamster status strip -->
-  <div class="status-strip" id="statusStrip">
-    <span class="chip" id="chipStatus">🐹 Hamster: <b>…</b></span>
-    <span class="chip" id="chipRpm">⚙️ RPM: <b>…</b></span>
-    <span class="chip" id="chipRound">🔁 Round: <b>…</b></span>
-    <span class="chip" id="chipBlock">🧱 Block: <b>…</b></span>
-    <span class="chip" id="chipSupply">💎 SQK minted: <b>…</b></span>
+  <div class="status-panel">
+    <div class="panel-head">
+      <span class="panel-label">Squeekchain Network</span>
+      <span class="panel-note">● Live</span>
+    </div>
+    <div class="status-strip" id="statusStrip">
+      <span class="chip" id="chipStatus">🐹 Hamster: <b>…</b></span>
+      <span class="chip" id="chipRpm">⚙️ RPM: <b>…</b></span>
+      <span class="chip" id="chipRound">🔁 Round: <b>…</b></span>
+      <span class="chip" id="chipBlock">🧱 Block: <b>…</b></span>
+      <span class="chip" id="chipSupply">💎 SQK minted: <b>…</b></span>
+    </div>
   </div>
 
   <div class="tabs">
@@ -138,11 +246,11 @@ footer{margin-top:22px;color:var(--muted);font-size:12.5px;line-height:1.6;text-
 
       <label class="lbl" for="faucetAddrInput">Your Sepolia address</label>
       <input type="text" id="faucetAddrInput" placeholder="0x…" autocomplete="off" spellcheck="false">
-      <div id="turnstileBox" style="margin-top:12px"></div>
-      <div class="row" style="margin-top:14px">
+      <div id="turnstileBox"></div>
+      <div class="row mt16">
         <button id="claimBtn">💧 Claim 0.01 ETH</button>
       </div>
-      <p class="sub" style="margin-top:12px">Rules: <b>1 claim per wallet per 24 hours</b> (also 1 per IP per 24 hours), daily global cap applies. Sepolia ETH is testnet money — it has no real value.</p>
+      <p class="sub mt12">Rules: <b>1 claim per wallet per 24 hours</b> (also 1 per IP per 24 hours), daily global cap applies. Sepolia ETH is testnet money — it has no real value.</p>
       <div class="msg" id="faucetMsg"></div>
     </div>
   </section>
@@ -152,13 +260,9 @@ footer{margin-top:22px;color:var(--muted);font-size:12.5px;line-height:1.6;text-
     <div class="card">
       <h2>🥩 Squeek Staking</h2>
       <p class="sub">Stake your Squeek NFTs into the official Squeekchain staking contract so they earn SQK every block. Squeeks sitting in your wallet earn nothing — deposited Squeeks build power and accrue claimable SQK. All transactions are signed by <b>your own wallet</b>; this page never holds any keys.</p>
-      <div class="row" style="margin-top:12px">
-        <button id="connectBtn">🔌 Connect Wallet</button>
-        <span class="sub mono" id="connectedAddr"></span>
-      </div>
-      <label class="lbl" for="lookupInput">…or look up any address (read-only)</label>
-      <div class="row">
-        <input type="text" id="lookupInput" placeholder="0x…" style="flex:1;min-width:220px" autocomplete="off" spellcheck="false">
+      <label class="lbl" for="lookupInput">Look up any address (read-only)</label>
+      <div class="row lookup-row">
+        <input type="text" id="lookupInput" placeholder="0x…" autocomplete="off" spellcheck="false">
         <button class="ghost" id="lookupBtn">View</button>
       </div>
       <div class="msg" id="stakeMsg"></div>
@@ -177,7 +281,7 @@ footer{margin-top:22px;color:var(--muted);font-size:12.5px;line-height:1.6;text-
         <div class="stat"><div class="k">Staked</div><div class="v" id="stCountStaked">…</div></div>
         <div class="stat"><div class="k">Staking status</div><div class="v" id="stPaused">…</div></div>
       </div>
-      <div class="row" style="margin-top:14px">
+      <div class="row mt16">
         <button id="claimSqkBtn">💎 Claim SQK</button>
         <span class="sub">Moves all claimable SQK to your wallet.</span>
       </div>
@@ -185,7 +289,7 @@ footer{margin-top:22px;color:var(--muted);font-size:12.5px;line-height:1.6;text-
       <h3>🎒 In your wallet — select to stake</h3>
       <div class="token-grid" id="walletTokens"></div>
       <div class="empty" id="walletEmpty">No Squeeks in wallet.</div>
-      <div class="row" style="margin-top:10px">
+      <div class="row mt12">
         <button id="approveBtn" class="hidden">✅ Approve staking contract</button>
         <button id="stakeBtn" disabled>🥩 Stake selected</button>
       </div>
@@ -193,7 +297,7 @@ footer{margin-top:22px;color:var(--muted);font-size:12.5px;line-height:1.6;text-
       <h3>🏦 Staked — select to withdraw</h3>
       <div class="token-grid" id="stakedTokens"></div>
       <div class="empty" id="stakedEmpty">Nothing staked.</div>
-      <div class="row" style="margin-top:10px">
+      <div class="row mt12">
         <button id="withdrawBtn" disabled>↩️ Withdraw selected</button>
       </div>
 
