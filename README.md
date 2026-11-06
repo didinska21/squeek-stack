@@ -1,6 +1,6 @@
 # SQUEEK TOOLS — Faucet + Staking for Squeekchain (Sepolia)
 
-<!-- SQUEEKCHAIN-VERIFY:REPO-LINE -->
+squeekchain-project: bbcde132-b8e9-4c39-8ae8-1c14cc9f44ff
 
 A fan-made community tool for [Squeekchain](https://squeekchain.com), the
 hamster-powered toychain anchored on **Ethereum Sepolia testnet**. One
